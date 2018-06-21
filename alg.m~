@@ -15,7 +15,7 @@ dista=maxFrechet;
 dista2=maxFrechet;
 qgamas=2;
 pung=5;
-ne=5;
+ne=3;
 % frechetsal=zeros(1,pung-qgamas+1);
 tim=1;
 % % Make all the combinations for n length scanpaths in a k-waise maner
@@ -40,11 +40,11 @@ for z=1:tim
 % ex, ey = Boundaries
 % n = number of points to generate
 % npoints = number of scanpath points to evaluate as pattern
-    [Sal1, Sal2]=RandomWalk(50,50,pung, ne);
-    qx =Sal1(1,:)
-    qy =Sal1(2,:)
-    qpx=Sal2(1,:)
-    qpy=Sal2(2,:)
+    Sal=RandomWalk(50,50,pung, ne);
+    qx =Sal(1,:)
+    qy =Sal(2,:)
+    qpx=Sal(3,:)
+    qpy=Sal(4,:)
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
     for qgam=1:size(allc,1)
@@ -164,7 +164,7 @@ end
 for ii = 1:length(qx)
     text(qx(ii),qy(ii),num2str(ii),'color','k')
 end
-for ii = 1:length(qpx)
+for ii = 1:length(qx)
     text(qpx(ii),qpy(ii),num2str(ii),'color','k')
 end
 allc'
@@ -186,20 +186,8 @@ else
     fprintf('\nEl scanpath patron NO cumple con el scanpath generado\t\n\n');
     fprintf('%f errores de %f comparaciones, %i \t\n',size(vfrechet,2)*size(vfrechet,1)-sum(vfrechet(:)==0),size(vfrechet,2)*size(vfrechet,1),(((sum(vfrechet(:)==0))/(size(vfrechet,2)*size(vfrechet,1))))*100);
 end
-figure (2)
-plot(qx,qy,'r');
-hold on;
-plot(qpx,qpy,'b');
-grid on;
-grid minor;
-axis([0 2000 0 1300]);
-for ii = 1:length(qx)
-    text(qx(ii),qy(ii),num2str(ii),'color','r')
-end
-for ii = 1:length(qpx)
-    text(qpx(ii),qpy(ii),num2str(ii),'color','b')
-end
-hold on;
+
+                grid minor;
 end
 
 function dis = wdistance(x0,y0,x1,y1,alx,aly)
@@ -252,7 +240,7 @@ else
 end
 end
 
-function [Sal1, Sal2] = RandomWalk (ex, ey, n, ne)
+function [Sal] = RandomWalk (ex, ey, n, ne)
 % % % % % 1920x1080 Screen Resolution
 % % % % % First random point within a square on the middle on the screen
 % % % % % emulation atention to test
@@ -265,25 +253,24 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, ne)
 % % Add gaussian noise to each coordenate
     x2=round((randn(1,n)*30)+x1)
     y2=round((randn(1,m)*30)+y1)
-%     er = randi([2 n-1],1,1);
-%     x2(1:er);
-%     y2(1:er);
-%     x2(er+1:end);
-%     y2(er+1:end);
-%     Sal1(1,:)=horzcat(x1(1:er), round((x1(er)-5)+rand(1,ne)*(x1(er)+5)), x1(er+1:end));
-%     Sal1(2,:)=horzcat(y1(1:er), round((y1(er)-5)+rand(1,ne)*(y1(er)+5)), y1(er+1:end));
-% Add random outlier
-    err=randi([1 5],1,1);
-    if (err>2)
-       pla=randi(n,1,1);
-       x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin));       
-       y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin));
-    end
+    er = randi([1 n],1,1);
+    x2(1:er)
+    y2(1:er)
+    x2(er+1:end)
+    y2(er+1:end)
+    Sal(1,:)=horzcat(x2(1:er), round((x2(er)-20)+rand(1,ne)*(x2(er)+20)), x2(er+1:end))
+% % Add random outlier
+%     err=abs(rand(1));
+%     if (err>0.6)
+%        pla=randi(n,1,1);
+%        x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin));       
+%        y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin));
+%     end
 % To a Sal vector
-    Sal1(1,:)=real(x1);
-    Sal1(2,:)=real(y1);
-    Sal2(1,:)=real(x2);
-    Sal2(2,:)=real(y2);
+    Sal(1,:)=real(x1);
+    Sal(2,:)=real(y1);
+    Sal(3,:)=real(x2);
+    Sal(4,:)=real(y2);
 end
 
 function [decide] = frechet_decide(P,Q,len,plotFSD,printFSD)
