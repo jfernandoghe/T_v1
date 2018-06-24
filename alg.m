@@ -14,7 +14,7 @@ maxA=maxFrechet;
 dista=maxFrechet;
 dista2=maxFrechet;
 qgamas=2;
-pung=5;
+pung=10;
 ne=5;
 % frechetsal=zeros(1,pung-qgamas+1);
 tim=1;
@@ -186,20 +186,20 @@ else
     fprintf('\nEl scanpath patron NO cumple con el scanpath generado\t\n\n');
     fprintf('%f errores de %f comparaciones, %i \t\n',size(vfrechet,2)*size(vfrechet,1)-sum(vfrechet(:)==0),size(vfrechet,2)*size(vfrechet,1),(((sum(vfrechet(:)==0))/(size(vfrechet,2)*size(vfrechet,1))))*100);
 end
-figure (2)
-plot(qx,qy,'r');
-hold on;
-plot(qpx,qpy,'b');
-grid on;
-grid minor;
-axis([0 2000 0 1300]);
-for ii = 1:length(qx)
-    text(qx(ii),qy(ii),num2str(ii),'color','r')
-end
-for ii = 1:length(qpx)
-    text(qpx(ii),qpy(ii),num2str(ii),'color','b')
-end
-hold on;
+% figure (2)
+% plot(qx,qy,'r');
+% hold on;
+% plot(qpx,qpy,'b');
+% grid on;
+% grid minor;
+% axis([0 2000 0 1300]);
+% for ii = 1:length(qx)
+%     text(qx(ii),qy(ii),num2str(ii),'color','r')
+% end
+% for ii = 1:length(qpx)
+%     text(qpx(ii),qpy(ii),num2str(ii),'color','b')
+% end
+% hold on;
 end
 
 function dis = wdistance(x0,y0,x1,y1,alx,aly)
@@ -273,11 +273,12 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, ne)
 %     Sal1(1,:)=horzcat(x1(1:er), round((x1(er)-5)+rand(1,ne)*(x1(er)+5)), x1(er+1:end));
 %     Sal1(2,:)=horzcat(y1(1:er), round((y1(er)-5)+rand(1,ne)*(y1(er)+5)), y1(er+1:end));
 % Add random outlier
-    err=randi([1 5],1,1);
-    if (err>2)
+    err=randi([1 n],1,1);
+    top=fix(n/5)
+    for i=1:top
        pla=randi(n,1,1);
-       x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin));       
-       y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin));
+       x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin))       
+       y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin))
     end
 % To a Sal vector
     Sal1(1,:)=real(x1);
