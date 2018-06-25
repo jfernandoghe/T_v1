@@ -13,9 +13,9 @@ maxFrechet=(3*30)*sqrt(2);
 maxA=maxFrechet;
 dista=maxFrechet;
 dista2=maxFrechet;
-qgamas=2;
-pung=10;
-ne=5;
+qgamas=3;
+pung=5;
+ne=2;
 % frechetsal=zeros(1,pung-qgamas+1);
 tim=1;
 % % Make all the combinations for n length scanpaths in a k-waise maner
@@ -40,7 +40,7 @@ for z=1:tim
 % ex, ey = Boundaries
 % n = number of points to generate
 % npoints = number of scanpath points to evaluate as pattern
-    [Sal1, Sal2]=RandomWalk(50,50,pung, ne);
+    [Sal1, Sal2]=RandomWalk2(50,50,pung, ne);
     qx =Sal1(1,:)
     qy =Sal1(2,:)
     qpx=Sal2(1,:)
@@ -186,20 +186,20 @@ else
     fprintf('\nEl scanpath patron NO cumple con el scanpath generado\t\n\n');
     fprintf('%f errores de %f comparaciones, %i \t\n',size(vfrechet,2)*size(vfrechet,1)-sum(vfrechet(:)==0),size(vfrechet,2)*size(vfrechet,1),(((sum(vfrechet(:)==0))/(size(vfrechet,2)*size(vfrechet,1))))*100);
 end
-% figure (2)
-% plot(qx,qy,'r');
-% hold on;
-% plot(qpx,qpy,'b');
-% grid on;
-% grid minor;
-% axis([0 2000 0 1300]);
-% for ii = 1:length(qx)
-%     text(qx(ii),qy(ii),num2str(ii),'color','r')
-% end
-% for ii = 1:length(qpx)
-%     text(qpx(ii),qpy(ii),num2str(ii),'color','b')
-% end
-% hold on;
+figure (2)
+plot(qx,qy,'r');
+hold on;
+plot(qpx,qpy,'b');
+grid on;
+grid minor;
+axis([0 2000 0 1300]);
+for ii = 1:length(qx)
+    text(qx(ii),qy(ii),num2str(ii),'color','r')
+end
+for ii = 1:length(qpx)
+    text(qpx(ii),qpy(ii),num2str(ii),'color','b')
+end
+hold on;
 end
 
 function dis = wdistance(x0,y0,x1,y1,alx,aly)
@@ -283,6 +283,41 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, ne)
 % To a Sal vector
     Sal1(1,:)=real(x1);
     Sal1(2,:)=real(y1);
+    Sal2(1,:)=real(x2);
+    Sal2(2,:)=real(y2);
+end
+
+function [Sal1, Sal2] = RandomWalk2 (ex, ey, n, ne)
+% % % % % 1920x1080 Screen Resolution
+% % % % % First random point within a square on the middle on the screen
+% % % % % emulation atention to test
+    xmin=0+ex;      xmax=1920-ex;       %ex px offset from top to bottom
+    ymin=0+ey;      ymax=1080-ey;       %ey px offset from left to right
+    m=n;                                %Number of points to generate
+% % Random Coordinates n=m
+    x1=round(xmin+rand(1,n)*(xmax-xmin));
+    y1=round(ymin+rand(1,m)*(ymax-ymin));
+% % Add gaussian noise to each coordenate
+    x2=round((randn(1,n)*30)+x1)
+    y2=round((randn(1,m)*30)+y1)
+    er = randi([2 n-1],1,1);
+    x2(1:er);
+    y2(1:er);
+    x2(er+1:end);
+    y2(er+1:end);
+    Sal1(1,:)=horzcat(x1(1:er), round((x1(er)-5)+rand(1,ne)*(1920/10)), x1(er+1:end));
+    Sal1(2,:)=horzcat(y1(1:er), round((y1(er)-5)+rand(1,ne)*(1080/10)), y1(er+1:end));
+% Add random outlier
+    err=randi([1 n],1,1);
+    top=fix(n/5)
+    for i=1:top
+       pla=randi(n,1,1);
+       x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin))       
+       y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin))
+    end
+% To a Sal vector
+%     Sal1(1,:)=real(x1);
+%     Sal1(2,:)=real(y1);
     Sal2(1,:)=real(x2);
     Sal2(2,:)=real(y2);
 end
