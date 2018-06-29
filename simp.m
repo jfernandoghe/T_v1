@@ -11,17 +11,17 @@ maxFrechet=(3*30)*sqrt(2);
 maxA=maxFrechet;
 dista=maxFrechet;
 dista2=maxFrechet;
-qgamas=2;               %n-Gramas
-pung=4;                 %Points to generate
-ne=2;                   %Number of errors per point
-npe=3;                  %Number of points with error
+qgamas=3;
+pung=5;
+ne=3;
+npe=pung-2;
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % Random Walk Parameters
 % ex, ey = Boundaries
 % n = number of points to generate
 % npoints = number of scanpath points to evaluate as pattern
-%     Sal=RandomWalk(50,50,pung);
-    [Sal1,Sal2]=RandomWalk2(50, 50, pung, npe, ne);
+    [Sal1, Sal2]=RandomWalk2(50, 50, pung, ne, npe, maxFrechet);
     qx =Sal1(1,:)
     qy =Sal1(2,:)
     qpx=Sal2(1,:)
@@ -47,7 +47,7 @@ npe=3;                  %Number of points with error
 %     TWO_Esimp(qx, qy, maxFrechet)
 end
 
-function [Sal] = RandomWalk (ex, ey, n)
+function [Sal1, Sal2, outl] = RandomWalk2 (ex, ey, n, ne, npe, maxFrechet)
 % % % % % 1920x1080 Screen Resolution
 % % % % % First random point within a square on the middle on the screen
 % % % % % emulation atention to test
@@ -58,74 +58,37 @@ function [Sal] = RandomWalk (ex, ey, n)
     x1=round(xmin+rand(1,n)*(xmax-xmin));
     y1=round(ymin+rand(1,m)*(ymax-ymin));
 % % Add gaussian noise to each coordenate
-    x2=round((randn(1,n)*30)+x1);
-    y2=round((randn(1,m)*30)+y1);
-% % Add random outlier
-    err=abs(rand(1));
-    if (err>0.999)
-       pla=randi(n,1,1);
-       x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin));       
-       y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin));
-    end
-% To a Sal vector
-    Sal(1,:)=real(x1);
-    Sal(2,:)=real(y1);
-    Sal(3,:)=real(x2);
-    Sal(4,:)=real(y2);
-end
-
-function [Sal1, Sal2] = RandomWalk2 (ex, ey, n, npe, ne)
-% % % % % 1920x1080 Screen Resolution
-% % % % % First random point within a square on the middle on the screen
-% % % % % emulation atention to test
-    xmin=0+ex;      xmax=1920-ex;       %ex px offset from top to bottom
-    ymin=0+ey;      ymax=1080-ey;       %ey px offset from left to right
-    m=n;                                %Number of points to generate
-    k=1;
-% % Random Coordinates n=m
-    x1=round(xmin+rand(1,n)*(xmax-xmin))
-    y1=round(ymin+rand(1,m)*(ymax-ymin))
-% % Add gaussian noise to each coordenate
-    x2=round((randn(1,n)*30)+x1);
-    y2=round((randn(1,m)*30)+y1); 
-    er = randi([1 n-npe],1,1);
-    x1p=ones(1,size(x1,2)); y1p=ones(1,size(x1,2));
-    for k=1:npe
-        if (k==1)
-            inix=horzcat(x1(1:er));
-            iniy=horzcat(y1(1:er));
-        end
-        for k=2:npe
-            medx=round((x1(er)-10)+rand(1,ne)*(1920/10));
-            medy=round((y1(er)-10)+rand(1,ne)*(1920/10));
-        end
-        if (k==npe)
-            finx=horzcat(x1(er+1:end));
-            finy=horzcat(y1(er+1:end));
-        end 
-        a=horzcat(inix,medx,finx);
-        b=horzcat(iniy,medy,finy);
-        a=horzcat(a);
-        b=horzcat(b);
-    Sal1(1,:)=a
-    Sal1(2,:)=b
-%             Sal1(1,:)=horzcat(x1(1:er), round((x1(er)-10)+rand(1,ne)*(1920/10)),    round((x1(er+1)-10)+rand(1,ne+1)*(1920/10)),   round((x1(er+2)-10)+rand(1,ne+2)*(1920/10)),     x1(er+3:end))
-%             Sal1(2,:)=horzcat(y1(1:er), round((y1(er)-10)+rand(1,ne)*(1920/10)),    round((y1(er+1)-10)+rand(1,ne+1)*(1920/10)),   round((y1(er+2)-10)+rand(1,ne+2)*(1920/10)),     y1(er+3:end))
-     
+    x2=round((randn(1,n)*30)+x1)
+    y2=round((randn(1,m)*30)+y1)
+    e = randi([1 n-npe],1,1);    
+    sx=x2(1:e);
+    sy=y2(1:e);
+    ex=x2(e:end);
+    ey=y2(e:end);
+    m=[];
+    for i=0:(npe-1)
+        er=e+i;
+        mx=round(x1(er+i)+(rand(1,ne)*maxFrechet))
+        my=round(y1(er+i)+(rand(1,ne)*maxFrechet))
+        tx=horzcat(sx, ex)
+        ty=horzcat(sy, ey)
+        m=horzcat(m,mx)
+%         Sal1(1,:)=horzcat(x1(1:er), round((x1(er+i)-maxFrechet)+rand(1,ne)*maxFrechet), x1(er:end))
+%         Sal1(2,:)=horzcat(y1(1:er), round((y1(er+i)-maxFrechet)+rand(1,ne)*maxFrechet), y1(er:end))
     end
 % Add random outlier
-    err=randi([1 n],1,1);
-    top=fix(n/5)
-    for i=1:top
-       pla=randi(n,1,1);
-       x1(1,pla)=round(xmin+rand(1,1)*(xmax-xmin))       
-       y1(1,pla)=round(ymin+rand(1,1)*(ymax-ymin))
-    end
+    top=fix(n/6)
+%     for i=1:top
+%        pla=randi(n,1,1);
+%        x2(1,pla)=round(xmin+rand(1,1)*(xmax-xmin))       
+%        y2(1,pla)=round(ymin+rand(1,1)*(ymax-ymin))
+%     end
 % To a Sal vector
 %     Sal1(1,:)=real(x1);
 %     Sal1(2,:)=real(y1);
     Sal2(1,:)=real(x2);
     Sal2(2,:)=real(y2);
+    outl=top;
 end
 
 function [simp] = TWO_Esimp (scx, scy, maxFrechet)
