@@ -30,7 +30,8 @@ npe=pung-2;
     [Vsal2, strp1,strp2]=edit_dist(qpx, qpy, 120);
     Vsal1
     Vsal2
-    [v1,v2]=EditDistance(Vsal1,Vsal2)
+    [v1]=EditDistance(Vsal1,Vsal2)
+    lev(Vsal1,Vsal2)
 end
 
 function [vsal,str1, str2] = edit_dist (rawx, rawy, inte)
@@ -114,6 +115,32 @@ for i=1:m
     end
 end
 V=v(m+1,n+1);
+end
+
+function d = lev(s,t)
+% Levenshtein distance between strings or char arrays.
+% lev(s,t) is the number of deletions, insertions,
+% or substitutions required to transform s to t.
+% https://en.wikipedia.org/wiki/Levenshtein_distance
+
+    s = char(s);
+    t = char(t);
+    m = length(s);
+    n = length(t);
+    x = 0:n;
+    y = zeros(1,n+1);   
+    for i = 1:m
+        y(1) = i;
+        for j = 1:n
+            c = (s(i) ~= t(j)); % c = 0 if chars match, 1 if not.
+            y(j+1) = min([y(j) + 1
+                          x(j+1) + 1
+                          x(j) + c]);
+        end
+        % swap
+        [x,y] = deal(y,x);
+    end
+    d = x(n+1);
 end
 
 function [Sal1, Sal2, outl] = RandomWalk2 (ex, ey, n, ne, npe, maxFrechet)
