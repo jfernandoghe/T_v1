@@ -32,6 +32,7 @@ npe=pung-2;
     Vsal2
     [v1]=EditDistance(Vsal1,Vsal2)
     lev(Vsal1,Vsal2)
+    [Score, Alignment] = nwalign(Vsal1,Vsal2)
 end
 
 function [vsal,str1, str2] = edit_dist (rawx, rawy, inte)
