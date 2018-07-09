@@ -12,7 +12,7 @@ maxA=maxFrechet;
 dista=maxFrechet;
 dista2=maxFrechet;
 qgamas=3;
-pung=5;
+pung=4;
 ne=3;
 npe=pung-2;
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -67,31 +67,46 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
     xmin=0+ex;      xmax=1920-ex;       %ex px offset from top to bottom
     ymin=0+ey;      ymax=1080-ey;       %ey px offset from left to right
     m=n;                                %Number of points to generate
-    Sal1=[]; Sal2=[]; s1=[]; s2=[];
+    Sal1=[]; Sal2=[]; s1=[]; s2=[]; s3=[]; s4=[];
+    i=1;
 % % Random Coordinates n=m
-    x1=round(xmin+rand(1,n)*(xmax-xmin))
-    y1=round(ymin+rand(1,m)*(ymax-ymin))
-    x2=round((randn(1,n)*30)+x1);
-    y2=round((randn(1,m)*30)+y1); 
+%     x1=round(xmin+rand(1,n)*(xmax-xmin))
+%     y1=round(ymin+rand(1,m)*(ymax-ymin))
+    
+    s1=round(xmin+rand(1,1)*(xmax-xmin))
+    s2=round(ymin+rand(1,1)*(ymax-ymin))
+%     x2=round((randn(1,n)*30)+x1);
+%     y2=round((randn(1,m)*30)+y1); 
     while i~=n
         pro=abs(rand(1));
-        if pro>0.5
-            err=rand(1,1);
+        if pro>0.4
+%             err=randn(1,1);
 %             s1=horzcat(s1, x1(band:i), rand(1,1)*(maxFrechet*3))             
 %             s2=horzcat(s2, y1(band:i), rand(1,1)*(maxFrechet*3))
-            s1=horzcat(s1, x1(i)*err*(maxFrechet))            
-            s2=horzcat(s2, y1(i)*err*(maxFrechet))
+            s1=horzcat(s1, (s1(i)+(randn(1,1)*maxFrechet/3)))
+            s2=horzcat(s2, (s1(i)+(randn(1,1)*maxFrechet/3)))
+%             s1=horzcat(s1, x1(i)+(randn(1,1)*20))            
+%             s2=horzcat(s2, y1(i)+(randn(1,1)*20))
         else
-            s1=horzcat(s1, x1(i))
-            s2=horzcat(s2, y1(i))
+            s1=horzcat(s1,round(xmin+rand(1,1)*(xmax-xmin)))
+            s2=horzcat(s2,round(xmin+rand(1,1)*(xmax-xmin)))
+%             s1=horzcat(s1, x1(i));
+%             s2=horzcat(s2, y1(i));
+            s3=horzcat(s3, (s1(i)+(randn(1,1)*maxFrechet/3)));
+            s4=horzcat(s4, (s2(i)+(randn(1,1)*maxFrechet/3)));
+            i=i+1;
         end
-    end   
-    Sal1(1,:)=x1;
-    Sal1(2,:)=y1;
-%     Sal1(1,:)=s1;
-%     Sal1(2,:)=s2;
-    Sal2(1,:)=real(x2);
-    Sal2(2,:)=real(y2);
+    end
+    s1
+    s2
+%     Sal1(1,:)=x1;
+%     Sal1(2,:)=y1;
+    Sal1(1,:)=s1;
+    Sal1(2,:)=s2;
+    Sal2(1,:)=s3;
+    Sal2(2,:)=s4;
+%     Sal2(1,:)=real(x2);
+%     Sal2(2,:)=real(y2);
 end
 
 % % % Random Coordinates n=m
