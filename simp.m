@@ -12,7 +12,7 @@ maxA=maxFrechet;
 dista=maxFrechet;
 dista2=maxFrechet;
 qgamas=3;
-pung=4;
+pung=3;
 ne=3;
 npe=pung-2;
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -33,7 +33,7 @@ npe=pung-2;
     plot(qx,qy,'.-.r')
     plot(qx,qy,'*r')
     for ii = 1:length(qx)
-        text(qx(ii),qy(ii),num2str(ii),'Color','r')
+        text(qx(ii),qy(ii)+5,num2str(ii),'Color','r')
     end
     hold on;
     grid on
@@ -41,25 +41,13 @@ npe=pung-2;
     plot(qpx,qpy,'.-.b')
     plot(qpx,qpy,'*b')
     for ii = 1:length(qpx)
-        text(qpx(ii),qpy(ii),num2str(ii),'Color','b')
+        text(qpx(ii),qpy(ii)+5,num2str(ii),'Color','b')
     end
     
     
 %     TWO_Esimp(qx, qy, maxFrechet)
 end
 
-% During each 
-% iteration, a new gaze point is either created within close proximity to
-% the current fixation or a saccade is initiated. A new saccade’s 
-% coordinates are determined according to a normal distribution N (µ, σ0) 
-% with µ set to the screen center and σ' set to a sixth of the display 
-% width and height. Fixations are modeled by a Poisson distribution with a 
-% mean of 1300 ms. New gaze points that are part of a fixation are modeled 
-% by a normally distributed offset characterized by N (0, σ00) with σ 00 
-% set to 0.91 visual angle from the previous location, or about 30 pixels. 
-% The choice of 30 pixels is not unusual; it is actually more conservative 
-% than the typical choice of 50 pixels in common dispersion-based 
-% (position-variance) fixation detection algorithms.
 function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
 % % % % % 1920x1080 Screen Resolution
 % % % % % First random point within a square on the middle on the screen
@@ -77,24 +65,17 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
     s2=round(ymin+rand(1,1)*(ymax-ymin))
 %     x2=round((randn(1,n)*30)+x1);
 %     y2=round((randn(1,m)*30)+y1); 
-    while i~=n
+    while i~=n+1
         pro=abs(rand(1));
         if pro>0.4
-%             err=randn(1,1);
-%             s1=horzcat(s1, x1(band:i), rand(1,1)*(maxFrechet*3))             
-%             s2=horzcat(s2, y1(band:i), rand(1,1)*(maxFrechet*3))
             s1=horzcat(s1, (s1(k)+(randn(1,1)*30)))
             s2=horzcat(s2, (s1(k)+(randn(1,1)*30)))
             k=k+1;
-%             s1=horzcat(s1, x1(i)+(randn(1,1)*20))            
-%             s2=horzcat(s2, y1(i)+(randn(1,1)*20))
         else
             s1=horzcat(s1,round(xmin+rand(1,1)*(xmax-xmin)))
             s2=horzcat(s2,round(xmin+rand(1,1)*(xmax-xmin)))
-%             s1=horzcat(s1, x1(i));
-%             s2=horzcat(s2, y1(i));
-            s3=horzcat(s3, (s1(i)+(randn(1,1)*30)));
-            s4=horzcat(s4, (s2(i)+(randn(1,1)*30)));
+            s3=horzcat(s3, (s1(k)+(randn(1,1)*30)));
+            s4=horzcat(s4, (s2(k)+(randn(1,1)*30)));
             i=i+1;
         end
     end
@@ -110,12 +91,7 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
 %     Sal2(2,:)=real(y2);
 end
 
-% % % Random Coordinates n=m
-%     x1=round(xmin+rand(1,n)*(xmax-xmin));
-%     y1=round(ymin+rand(1,m)*(ymax-ymin));
-% % % Add gaussian noise to each coordenate
-%     x2=round((randn(1,n)*30)+x1)
-%     y2=round((randn(1,m)*30)+y1)
+
 
 function [Sal1, Sal2, outl] = RandomWalk2 (ex, ey, n, ne, npe, maxFrechet)
 % % % % % 1920x1080 Screen Resolution
