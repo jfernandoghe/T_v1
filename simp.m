@@ -68,7 +68,7 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
     ymin=0+ey;      ymax=1080-ey;       %ey px offset from left to right
     m=n;                                %Number of points to generate
     Sal1=[]; Sal2=[]; s1=[]; s2=[]; s3=[]; s4=[];
-    i=1;
+    i=1; k=1;
 % % Random Coordinates n=m
 %     x1=round(xmin+rand(1,n)*(xmax-xmin))
 %     y1=round(ymin+rand(1,m)*(ymax-ymin))
@@ -83,8 +83,9 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
 %             err=randn(1,1);
 %             s1=horzcat(s1, x1(band:i), rand(1,1)*(maxFrechet*3))             
 %             s2=horzcat(s2, y1(band:i), rand(1,1)*(maxFrechet*3))
-            s1=horzcat(s1, (s1(i)+(randn(1,1)*maxFrechet/3)))
-            s2=horzcat(s2, (s1(i)+(randn(1,1)*maxFrechet/3)))
+            s1=horzcat(s1, (s1(k)+(randn(1,1)*30)))
+            s2=horzcat(s2, (s1(k)+(randn(1,1)*30)))
+            k=k+1;
 %             s1=horzcat(s1, x1(i)+(randn(1,1)*20))            
 %             s2=horzcat(s2, y1(i)+(randn(1,1)*20))
         else
@@ -92,8 +93,8 @@ function [Sal1, Sal2] = RandomWalk (ex, ey, n, maxFrechet)
             s2=horzcat(s2,round(xmin+rand(1,1)*(xmax-xmin)))
 %             s1=horzcat(s1, x1(i));
 %             s2=horzcat(s2, y1(i));
-            s3=horzcat(s3, (s1(i)+(randn(1,1)*maxFrechet/3)));
-            s4=horzcat(s4, (s2(i)+(randn(1,1)*maxFrechet/3)));
+            s3=horzcat(s3, (s1(i)+(randn(1,1)*30)));
+            s4=horzcat(s4, (s2(i)+(randn(1,1)*30)));
             i=i+1;
         end
     end
